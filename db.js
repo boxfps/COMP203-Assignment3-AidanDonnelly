@@ -1,5 +1,6 @@
 const mysql = require('mysql2')
 const connection = mysql.createConnection({
+// also I did this whole assignment on Linux so sorry if stuff doesnt work 
 // i know this is insanely unsafe but it is sadly the only way i an get it working
 // please dont steal my stuff :) also this is a fake password for the record
   host: 'localhost',
