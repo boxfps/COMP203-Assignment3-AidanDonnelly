@@ -6,6 +6,7 @@ const createError = require('http-errors');
 
 const indexRouter = require('./routes/index');
 const todolistRouter = require('./routes/todolist');
+const todoInputRouter = require('./routes/todo-input'); // New route
 const db = require('./db'); // MySQL database connection
 
 const app = express();
@@ -20,6 +21,7 @@ app.use(express.static(path.join(__dirname, 'public'))); // Serves static files
 // Routes
 app.use('/', indexRouter); // Default routes
 app.use('/todo', todolistRouter); // Todo list routes
+app.use('/', todoInputRouter); // Add Todo input page route
 
 // Error Handling
 // Catch 404 errors

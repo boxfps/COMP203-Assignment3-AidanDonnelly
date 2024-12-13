@@ -1,0 +1,9 @@
+doctype html
+html(lang="en")
+  head
+    title= title
+  body
+    h1= title
+    form(action="/todo" method="POST")
+      input(type="text" name="description" placeholder="Enter a new Todo")
+      button(type="submit") Add Todo

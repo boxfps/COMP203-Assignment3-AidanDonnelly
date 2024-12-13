@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .todo-form {
+            margin-bottom: 20px;
+        }
+        .todo-form input, .todo-form button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        .todo-list {
+            list-style: none;
+            padding: 0;
+        }
+        .todo-list li {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .todo-list button {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Todo List</h1>
+    <div class="todo-form">
+        <input type="text" id="todoDescription" placeholder="Enter a new todo">
+        <button onclick="addTodo()">Add Todo</button>
+    </div>
+    <ul id="todoList" class="todo-list"></ul>
+
+    <script>
+        const apiUrl = '/todo';
+
+        // Fetch and display all todos
+        async function fetchTodos() {
+            const response = await fetch(apiUrl);
+            const todos = await response.json();
+
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = '';
+
+            todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${todo.description}
+                    <div>
+                        <button onclick="markCompleted(${todo.id})">Mark Completed</button>
+                        <button onclick="deleteTodo(${todo.id})">Delete</button>
+                    </div>
+                `;
+                todoList.appendChild(li);
+            });
+        }
+
+        // Add a new todo
+        async function addTodo() {
+            const description = document.getElementById('todoDescription').value;
+            if (!description) {
+                alert('Please enter a description.');
+                return;
+            }
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description })
+            });
+
+            if (response.ok) {
+                document.getElementById('todoDescription').value = '';
+                fetchTodos();
+            } else {
+                alert('Failed to add todo.');
+            }
+        }
+
+        // Mark a todo as completed
+        async function markCompleted(id) {
+            const response = await fetch(`${apiUrl}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ completed_ts: Math.floor(Date.now() / 1000) })
+            });
+
+            if (response.ok) {
+                fetchTodos();
+            } else {
+                alert('Failed to mark todo as completed.');
+            }
+        }
+
+        // Delete a todo
+        async function deleteTodo(id) {
+            const response = await fetch(`${apiUrl}/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                fetchTodos();
+            } else {
+                alert('Failed to delete todo.');
+            }
+        }
+
+        // Initial fetch of todos
+        fetchTodos();
+    </script>
+</body>
+</html>
