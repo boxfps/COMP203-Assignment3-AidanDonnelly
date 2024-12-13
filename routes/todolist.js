@@ -1,9 +1,17 @@
 var express = require('express');
+const connection = require('../db');
 var router = express.Router();
 
 // Route to get all todos
 router.get('/', (req, res) => {
     res.send('Get all todos');
+    const query = 'SELECT * FROM todo_list';
+    connection.query(query, (err, results)=> {
+        if (err) 
+        {
+            return res.status(500).json({message: err.message})
+        }
+    })
 });
 
 // Route to get a specific todo by ID
